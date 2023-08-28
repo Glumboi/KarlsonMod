@@ -3,6 +3,7 @@ using BepInEx.Configuration;
 using BepInEx.Logging;
 using ConfigurationManager;
 using HarmonyLib;
+using KarlsonMod.MonoBehaviours;
 using KarlsonMod.Patches;
 using UnityEngine;
 
@@ -53,7 +54,7 @@ namespace KarlsonMod
         public static ConfigEntry<KeyboardShortcut> SpawnEnemyKeyCodeEntry;
 
         private static readonly Harmony Harmony = new Harmony(MyGUID);
-        private static Rect windowRect = new Rect(20, 20, 350, 620);
+        private static Rect windowRect = new Rect(20, 20, 350, 700);
         public static ManualLogSource Log = new ManualLogSource(PluginName);
         public static bool menuEnabled;
 
@@ -81,17 +82,17 @@ namespace KarlsonMod
             {
                 ToggleMenu(true);
             }
-            
+
             if (Input.GetKeyDown(ToggleCursorLockKeyCodeEntry.Value.MainKey))
             {
                 ToggleMenu(true, true);
-            }            
-            
+            }
+
             if (Input.GetKeyDown(SpawnEnemyKeyCodeEntry.Value.MainKey))
             {
                 PlayerPatches.SpawnEnemy();
-            }            
-            
+            }
+
             if (Input.GetKeyDown(ToggleNoclipKeyCodeEntry.Value.MainKey))
             {
                 NoclipEntry.Value = !NoclipEntry.Value;
@@ -100,10 +101,13 @@ namespace KarlsonMod
 
         public static void ToggleMenu(bool enable, bool mouseOnly = false)
         {
-            if(enable && menuEnabled)
+            if (enable && menuEnabled)
                 enable = !enable;
 
-            if (!mouseOnly) { menuEnabled = enable; }
+            if (!mouseOnly)
+            {
+                menuEnabled = enable;
+            }
 
             Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked;
             Cursor.visible = enable;
@@ -111,48 +115,50 @@ namespace KarlsonMod
 
         void LoadConfig()
         {
-            JumpingForceEntry = Config.Bind("General",    // The section under which the option is shown
-                JumpingForceKey,                            // The key of the configuration option
-                PlayerPatches.newJumpingForce,                            // The default value
-                new ConfigDescription("Changes the jumping strength",         // Description that appears in Configuration Manager
-                    new AcceptableValueRange<float>(550f, 5000)));     // Acceptable range, enabled slider and validation in Configuration Manager
+            JumpingForceEntry = Config.Bind("General", // The section under which the option is shown
+                JumpingForceKey, // The key of the configuration option
+                PlayerPatches.newJumpingForce, // The default value
+                new ConfigDescription(
+                    "Changes the jumping strength", // Description that appears in Configuration Manager
+                    new AcceptableValueRange<float>(550f,
+                        5000))); // Acceptable range, enabled slider and validation in Configuration Manager
 
             JumpingForceEntry.SettingChanged += ConfigSettingChanged;
 
-            SlideSlowDownEntry = Config.Bind("General",    
-                SlideSlowDownKey,                            
-                PlayerPatches.newSlideSlowdown,                            
-                new ConfigDescription("Changes the slide slowdown strength",         
-                    new AcceptableValueRange<float>(0.0f, 0.2f)));     
+            SlideSlowDownEntry = Config.Bind("General",
+                SlideSlowDownKey,
+                PlayerPatches.newSlideSlowdown,
+                new ConfigDescription("Changes the slide slowdown strength",
+                    new AcceptableValueRange<float>(0.0f, 0.2f)));
 
             JumpingForceEntry.SettingChanged += ConfigSettingChanged;
 
-            MoveSpeedEntry = Config.Bind("General",    
-                MoveSpeedKey,                            
-                PlayerPatches.newMoveSpeed,                           
-                new ConfigDescription("Changes the slide slowdown strength",        
-                    new AcceptableValueRange<float>(20f, 100f)));     
+            MoveSpeedEntry = Config.Bind("General",
+                MoveSpeedKey,
+                PlayerPatches.newMoveSpeed,
+                new ConfigDescription("Changes the slide slowdown strength",
+                    new AcceptableValueRange<float>(20f, 100f)));
 
             MoveSpeedEntry.SettingChanged += ConfigSettingChanged;
 
-            ExplosiveBulletsEntry = Config.Bind("General",    
-                ExplosiveBulletsKey,                           
-                BulletPatches.explosiveBullets,                            
-                    new ConfigDescription("Toggles explosions on all Bullets (this makes enemy bullets explode as well)"));    
+            ExplosiveBulletsEntry = Config.Bind("General",
+                ExplosiveBulletsKey,
+                BulletPatches.explosiveBullets,
+                new ConfigDescription("Toggles explosions on all Bullets (this makes enemy bullets explode as well)"));
 
             ExplosiveBulletsEntry.SettingChanged += ConfigSettingChanged;
 
             GodmodeEntry = Config.Bind("General",
                 GodmodeKey,
                 PlayerPatches.godMode,
-                    new ConfigDescription("Toggles Godmode"));
+                new ConfigDescription("Toggles Godmode"));
 
             GodmodeEntry.SettingChanged += ConfigSettingChanged;
 
             NoclipEntry = Config.Bind("General",
                 NoclipKey,
                 PlayerPatches.noclip,
-                    new ConfigDescription("Toggles Noclip"));
+                new ConfigDescription("Toggles Noclip"));
 
             NoclipEntry.SettingChanged += ConfigSettingChanged;
 
@@ -164,19 +170,19 @@ namespace KarlsonMod
 
             ToggleCursorLockKeyCodeEntry = Config.Bind("General",
                 ToggleCursorLockKeyCodeKey,
-                    new KeyboardShortcut(KeyCode.F3));
+                new KeyboardShortcut(KeyCode.F3));
 
-            ToggleCursorLockKeyCodeEntry.SettingChanged += ConfigSettingChanged;    
-            
+            ToggleCursorLockKeyCodeEntry.SettingChanged += ConfigSettingChanged;
+
             ToggleNoclipKeyCodeEntry = Config.Bind("General",
                 ToggleNoclipKeyCodeKey,
-                    new KeyboardShortcut(KeyCode.F5));
+                new KeyboardShortcut(KeyCode.F5));
 
-            ToggleNoclipKeyCodeEntry.SettingChanged += ConfigSettingChanged;        
-            
+            ToggleNoclipKeyCodeEntry.SettingChanged += ConfigSettingChanged;
+
             SpawnEnemyKeyCodeEntry = Config.Bind("General",
                 SpawnEnemyKeyCodeKey,
-                    new KeyboardShortcut(KeyCode.F4));
+                new KeyboardShortcut(KeyCode.F4));
 
             SpawnEnemyKeyCodeEntry.SettingChanged += ConfigSettingChanged;
         }
@@ -196,7 +202,7 @@ namespace KarlsonMod
             {
                 PlayerPatches.newJumpingForce = JumpingForceEntry.Value;
             }
-            
+
             if (settingChangedEventArgs.ChangedSetting.Definition.Key == SlideSlowDownKey)
             {
                 PlayerPatches.newSlideSlowdown = SlideSlowDownEntry.Value;
@@ -210,37 +216,38 @@ namespace KarlsonMod
             if (settingChangedEventArgs.ChangedSetting.Definition.Key == ExplosiveBulletsKey)
             {
                 BulletPatches.explosiveBullets = ExplosiveBulletsEntry.Value;
-            }    
-            
+            }
+
             if (settingChangedEventArgs.ChangedSetting.Definition.Key == GodmodeKey)
             {
                 PlayerPatches.godMode = GodmodeEntry.Value;
-            }    
-            
+            }
+
             if (settingChangedEventArgs.ChangedSetting.Definition.Key == NoclipKey)
             {
                 PlayerPatches.noclip = NoclipEntry.Value;
-            }                 
-            
+            }
+
             if (settingChangedEventArgs.ChangedSetting.Definition.Key == ToggleCursorLockKeyCodeKey)
             {
-                ToggleCursorLockKeyCodeEntry.Value = (KeyboardShortcut)settingChangedEventArgs.ChangedSetting.BoxedValue;
-            }               
-            
+                ToggleCursorLockKeyCodeEntry.Value =
+                    (KeyboardShortcut)settingChangedEventArgs.ChangedSetting.BoxedValue;
+            }
+
             if (settingChangedEventArgs.ChangedSetting.Definition.Key == ToggleNoclipKeyCodeKey)
             {
                 ToggleNoclipKeyCodeEntry.Value = (KeyboardShortcut)settingChangedEventArgs.ChangedSetting.BoxedValue;
-            }      
-            
+            }
+
             if (settingChangedEventArgs.ChangedSetting.Definition.Key == NativeUIKeyCodeKey)
             {
                 NativeUIKeyCodeEntry.Value = (KeyboardShortcut)settingChangedEventArgs.ChangedSetting.BoxedValue;
-            }               
-            
+            }
+
             if (settingChangedEventArgs.ChangedSetting.Definition.Key == SpawnEnemyKeyCodeKey)
             {
                 SpawnEnemyKeyCodeEntry.Value = (KeyboardShortcut)settingChangedEventArgs.ChangedSetting.BoxedValue;
-            }  
+            }
         }
     }
 }

@@ -17,10 +17,7 @@ public class HitMarkerDisplay : MonoBehaviour
 
     private void Start()
     {
-        string pluginPath = Path.GetDirectoryName(Paths.PluginPath);
-        string hitMarkerImagePath = Path.Combine(pluginPath, hitMarkerImageRelativePath);
-
-        hitMarkerTexture = LoadTextureFromFile(hitMarkerImagePath);
+        ReloadTexture();
 
         if (hitMarkerTexture == null)
         {
@@ -80,6 +77,15 @@ public class HitMarkerDisplay : MonoBehaviour
         }
     }
 
+    public void ReloadTexture()
+    {
+        string pluginPath = Path.GetDirectoryName(Paths.PluginPath);
+        string hitMarkerImagePath = Path.Combine(pluginPath, hitMarkerImageRelativePath);
+
+        hitMarkerTexture = LoadTextureFromFile(hitMarkerImagePath);
+        
+        KarlsonModPlugin.Log.LogInfo($"Loading hitmarker texture from: {hitMarkerImagePath}");
+    }
     
     // Load a texture from a file path
     private Texture2D LoadTextureFromFile(string filePath)

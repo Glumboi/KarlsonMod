@@ -33,11 +33,13 @@ namespace KarlsonMod
             GUILayout.BeginHorizontal();
 
             GUILayout.Space(5);
-            KarlsonModPlugin.JumpingForceEntry.Value = GUILayout.HorizontalSlider(KarlsonModPlugin.JumpingForceEntry.Value, 550f, 5000f);
+            KarlsonModPlugin.JumpingForceEntry.Value =
+                GUILayout.HorizontalSlider(KarlsonModPlugin.JumpingForceEntry.Value, 550f, 5000f);
             if (GUILayout.Button("Reset", new GUILayoutOption[1] { GUILayout.Width(60) }))
             {
                 KarlsonModPlugin.JumpingForceEntry.Value = 550f;
             }
+
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
@@ -51,11 +53,13 @@ namespace KarlsonMod
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(5);
-            KarlsonModPlugin.SlideSlowDownEntry.Value = GUILayout.HorizontalSlider(KarlsonModPlugin.SlideSlowDownEntry.Value, 0.0f, 0.2f);
+            KarlsonModPlugin.SlideSlowDownEntry.Value =
+                GUILayout.HorizontalSlider(KarlsonModPlugin.SlideSlowDownEntry.Value, 0.0f, 0.2f);
             if (GUILayout.Button("Reset", new GUILayoutOption[1] { GUILayout.Width(60) }))
             {
                 KarlsonModPlugin.SlideSlowDownEntry.Value = 0.2f;
             }
+
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
@@ -69,11 +73,13 @@ namespace KarlsonMod
 
             GUILayout.BeginHorizontal();
             GUILayout.Space(5);
-            KarlsonModPlugin.MoveSpeedEntry.Value = GUILayout.HorizontalSlider(KarlsonModPlugin.MoveSpeedEntry.Value, 20f, 100f);
+            KarlsonModPlugin.MoveSpeedEntry.Value =
+                GUILayout.HorizontalSlider(KarlsonModPlugin.MoveSpeedEntry.Value, 20f, 100f);
             if (GUILayout.Button("Reset", new GUILayoutOption[1] { GUILayout.Width(60) }))
             {
                 KarlsonModPlugin.MoveSpeedEntry.Value = 20f;
             }
+
             GUILayout.EndHorizontal();
 
             GUILayout.BeginHorizontal();
@@ -86,9 +92,12 @@ namespace KarlsonMod
             GUILayout.Label("Checkboxes", new GUILayoutOption[0]);
             GUILayout.BeginHorizontal(new GUILayoutOption[0]);
 
-            KarlsonModPlugin.GodmodeEntry.Value = GUILayout.Toggle(KarlsonModPlugin.GodmodeEntry.Value, "Godmode", new GUILayoutOption[0]);
-            KarlsonModPlugin.NoclipEntry.Value = GUILayout.Toggle(KarlsonModPlugin.NoclipEntry.Value, "Noclip", new GUILayoutOption[0]);
-            KarlsonModPlugin.ExplosiveBulletsEntry.Value = GUILayout.Toggle(KarlsonModPlugin.ExplosiveBulletsEntry.Value, "Explosive Bullets", new GUILayoutOption[0]);
+            KarlsonModPlugin.GodmodeEntry.Value =
+                GUILayout.Toggle(KarlsonModPlugin.GodmodeEntry.Value, "Godmode", new GUILayoutOption[0]);
+            KarlsonModPlugin.NoclipEntry.Value =
+                GUILayout.Toggle(KarlsonModPlugin.NoclipEntry.Value, "Noclip", new GUILayoutOption[0]);
+            KarlsonModPlugin.ExplosiveBulletsEntry.Value = GUILayout.Toggle(
+                KarlsonModPlugin.ExplosiveBulletsEntry.Value, "Explosive Bullets", new GUILayoutOption[0]);
 
             GUILayout.EndHorizontal();
 
@@ -110,6 +119,8 @@ namespace KarlsonMod
 
             GUILayout.Space(20f);
 
+            GUILayout.Label("Item name");
+
             gameObjSearch = GUILayout.TextField(gameObjSearch);
 
             if (GUILayout.Button("Drag specified items to me", new GUILayoutOption[0]))
@@ -119,6 +130,15 @@ namespace KarlsonMod
 
             GUILayout.Space(30f);
             GUILayout.Label($"Enemies in current Level: {PlayerPatches.EnemiesLeft()}");
+
+            GUILayout.Space(20f);
+            if (GUILayout.Button("Reload hitmarker texture"))
+            {
+                if (StaticInstances.hm != null)
+                {
+                    StaticInstances.hm.ReloadTexture();
+                }
+            }
 
             GUILayout.EndVertical();
             GUI.DragWindow(new Rect(0, 0, 10000, 20));

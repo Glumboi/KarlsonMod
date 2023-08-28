@@ -2,6 +2,7 @@
 using HarmonyLib;
 using UnityEngine;
 using System.Linq;
+using KarlsonMod.MonoBehaviours;
 
 namespace KarlsonMod.Patches
 {
@@ -22,8 +23,8 @@ namespace KarlsonMod.Patches
         public static void Awake_Postfix(PlayerMovement __instance)
         {
             instance = __instance;
-            /* instance.rb.useGravity = false;
-             instance.rb.isKinematic = true;*/
+            GameObject hmObj = new GameObject();
+            StaticInstances.hm = hmObj.AddComponent<HitMarkerDisplay>();
         }
 
         [HarmonyPatch("Update")]

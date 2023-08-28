@@ -18,10 +18,6 @@ namespace KarlsonMod.Patches
         {
             __instance.explosive = explosiveBullets;
             mainTvs = Traverse.Create(__instance);
-            //Setup hitmarker
-            GameObject hitMarkerDisplayObject = new GameObject();
-            hitMarkerDisplayObject.AddComponent<HitMarkerDisplay>();
-            hm = hitMarkerDisplayObject.GetComponent<HitMarkerDisplay>();
         }
 
         [HarmonyPatch("OnCollisionEnter", new[] { typeof(Collision) })]
@@ -65,7 +61,7 @@ namespace KarlsonMod.Patches
                 {
                     AudioManager.Instance.Play("Hitmarker");
                     MonoBehaviour.print("HITMARKER");
-                    hm.GetComponent<HitMarkerDisplay>().ShowHitMarker();
+                    StaticInstances.hm.ShowHitMarker();
                 }
 
                 UnityEngine.Object.Instantiate(PrefabManager.Instance.enemyHitAudio, other.contacts[0].point,
