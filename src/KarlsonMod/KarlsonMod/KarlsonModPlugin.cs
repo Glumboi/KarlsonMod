@@ -31,7 +31,11 @@ namespace KarlsonMod
         public static string MoveSpeedKey = "Moving speed";
         public static string ExplosiveBulletsKey = "Explosive Bullets";
         public static string GodmodeKey = "Godmode";
-        public static string NativeUICodeKey = "Shortcut for the native UI of the mod";
+        public static string NoclipKey = "Noclip";
+        public static string NativeUIKeyCodeKey = "Shortcut for the native UI of the mod";
+        public static string ToggleCursorLockKeyCodeKey = "Shortcut toggling the mouse lock";
+        public static string ToggleNoclipKeyCodeKey = "Shortcut for toggling noclip";
+        public static string SpawnEnemyKeyCodeKey = "Shortcut for spawning an enemy";
 
         // Configuration entries. Static, so can be accessed directly elsewhere in code via
         // e.g.
@@ -42,12 +46,16 @@ namespace KarlsonMod
         public static ConfigEntry<float> MoveSpeedEntry;
         public static ConfigEntry<bool> ExplosiveBulletsEntry;
         public static ConfigEntry<bool> GodmodeEntry;
-        public static ConfigEntry<KeyboardShortcut> NativeUICodeEntry;
+        public static ConfigEntry<bool> NoclipEntry;
+        public static ConfigEntry<KeyboardShortcut> NativeUIKeyCodeEntry;
+        public static ConfigEntry<KeyboardShortcut> ToggleCursorLockKeyCodeEntry;
+        public static ConfigEntry<KeyboardShortcut> ToggleNoclipKeyCodeEntry;
+        public static ConfigEntry<KeyboardShortcut> SpawnEnemyKeyCodeEntry;
 
         private static readonly Harmony Harmony = new Harmony(MyGUID);
+        private static Rect windowRect = new Rect(20, 20, 350, 620);
         public static ManualLogSource Log = new ManualLogSource(PluginName);
-
-        bool menuEnabled;
+        public static bool menuEnabled;
 
         private void Awake()
         {
@@ -63,30 +71,42 @@ namespace KarlsonMod
         {
             if (menuEnabled)
             {
-                UI.CustomMenu();
+                windowRect = GUI.Window(0, windowRect, UI.DoMyWindow, "Karlson Mod");
             }
         }
 
         void Update()
         {
-            if (Input.GetKeyDown(NativeUICodeEntry.Value.MainKey))
+            if (Input.GetKeyDown(NativeUIKeyCodeEntry.Value.MainKey))
             {
-                if(menuEnabled)
-                {
-                    menuEnabled = false;
-                    Cursor.lockState = CursorLockMode.Locked;
-                    Cursor.visible = false;
-                    
-                }
-                else
-                {
-                    menuEnabled = true;
-                    Cursor.lockState = CursorLockMode.None;
-                    Cursor.visible = true;
-                }
-
-                
+                ToggleMenu(true);
             }
+            
+            if (Input.GetKeyDown(ToggleCursorLockKeyCodeEntry.Value.MainKey))
+            {
+                ToggleMenu(true, true);
+            }            
+            
+            if (Input.GetKeyDown(SpawnEnemyKeyCodeEntry.Value.MainKey))
+            {
+                PlayerPatches.SpawnEnemy();
+            }            
+            
+            if (Input.GetKeyDown(ToggleNoclipKeyCodeEntry.Value.MainKey))
+            {
+                NoclipEntry.Value = !NoclipEntry.Value;
+            }
+        }
+
+        public static void ToggleMenu(bool enable, bool mouseOnly = false)
+        {
+            if(enable && menuEnabled)
+                enable = !enable;
+
+            if (!mouseOnly) { menuEnabled = enable; }
+
+            Cursor.lockState = enable ? CursorLockMode.None : CursorLockMode.Locked;
+            Cursor.visible = enable;
         }
 
         void LoadConfig()
@@ -129,11 +149,36 @@ namespace KarlsonMod
 
             GodmodeEntry.SettingChanged += ConfigSettingChanged;
 
-            NativeUICodeEntry = Config.Bind("General",
-                NativeUICodeKey,
+            NoclipEntry = Config.Bind("General",
+                NoclipKey,
+                PlayerPatches.noclip,
+                    new ConfigDescription("Toggles Noclip"));
+
+            NoclipEntry.SettingChanged += ConfigSettingChanged;
+
+            NativeUIKeyCodeEntry = Config.Bind("General",
+                NativeUIKeyCodeKey,
                 new KeyboardShortcut(KeyCode.F2));
 
-            NativeUICodeEntry.SettingChanged += ConfigSettingChanged;
+            NativeUIKeyCodeEntry.SettingChanged += ConfigSettingChanged;
+
+            ToggleCursorLockKeyCodeEntry = Config.Bind("General",
+                ToggleCursorLockKeyCodeKey,
+                    new KeyboardShortcut(KeyCode.F3));
+
+            ToggleCursorLockKeyCodeEntry.SettingChanged += ConfigSettingChanged;    
+            
+            ToggleNoclipKeyCodeEntry = Config.Bind("General",
+                ToggleNoclipKeyCodeKey,
+                    new KeyboardShortcut(KeyCode.F5));
+
+            ToggleNoclipKeyCodeEntry.SettingChanged += ConfigSettingChanged;        
+            
+            SpawnEnemyKeyCodeEntry = Config.Bind("General",
+                SpawnEnemyKeyCodeKey,
+                    new KeyboardShortcut(KeyCode.F4));
+
+            SpawnEnemyKeyCodeEntry.SettingChanged += ConfigSettingChanged;
         }
 
         private void ConfigSettingChanged(object sender, System.EventArgs e)
@@ -170,7 +215,32 @@ namespace KarlsonMod
             if (settingChangedEventArgs.ChangedSetting.Definition.Key == GodmodeKey)
             {
                 PlayerPatches.godMode = GodmodeEntry.Value;
-            }                             
+            }    
+            
+            if (settingChangedEventArgs.ChangedSetting.Definition.Key == NoclipKey)
+            {
+                PlayerPatches.noclip = NoclipEntry.Value;
+            }                 
+            
+            if (settingChangedEventArgs.ChangedSetting.Definition.Key == ToggleCursorLockKeyCodeKey)
+            {
+                ToggleCursorLockKeyCodeEntry.Value = (KeyboardShortcut)settingChangedEventArgs.ChangedSetting.BoxedValue;
+            }               
+            
+            if (settingChangedEventArgs.ChangedSetting.Definition.Key == ToggleNoclipKeyCodeKey)
+            {
+                ToggleNoclipKeyCodeEntry.Value = (KeyboardShortcut)settingChangedEventArgs.ChangedSetting.BoxedValue;
+            }      
+            
+            if (settingChangedEventArgs.ChangedSetting.Definition.Key == NativeUIKeyCodeKey)
+            {
+                NativeUIKeyCodeEntry.Value = (KeyboardShortcut)settingChangedEventArgs.ChangedSetting.BoxedValue;
+            }               
+            
+            if (settingChangedEventArgs.ChangedSetting.Definition.Key == SpawnEnemyKeyCodeKey)
+            {
+                SpawnEnemyKeyCodeEntry.Value = (KeyboardShortcut)settingChangedEventArgs.ChangedSetting.BoxedValue;
+            }  
         }
     }
 }

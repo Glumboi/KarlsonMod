@@ -10,11 +10,20 @@ namespace KarlsonMod
 {
     internal class UI
     {
-        public static void CustomMenu()
+        static string gameObjSearch = "";
+
+        public static void DoMyWindow(int windowID)
         {
-            GUILayout.BeginVertical(GUI.skin.box, GUILayout.Width(300));
-            GUI.backgroundColor = Color.red;
-            GUILayout.Label(KarlsonModPlugin.PluginName, new GUILayoutOption[0]);
+            GUILayout.BeginVertical();
+            GUILayout.BeginHorizontal();
+
+            if (GUILayout.Button("X", GUILayout.Width(40)))
+            {
+                KarlsonModPlugin.ToggleMenu(false);
+            }
+
+            GUILayout.EndHorizontal();
+
             GUILayout.Space(10f);
             GUILayout.Label("Sliders", new GUILayoutOption[0]);
 
@@ -22,6 +31,7 @@ namespace KarlsonMod
             GUILayout.Label("Jumping force", new GUILayoutOption[0]);
 
             GUILayout.BeginHorizontal();
+
             GUILayout.Space(5);
             KarlsonModPlugin.JumpingForceEntry.Value = GUILayout.HorizontalSlider(KarlsonModPlugin.JumpingForceEntry.Value, 550f, 5000f);
             if (GUILayout.Button("Reset", new GUILayoutOption[1] { GUILayout.Width(60) }))
@@ -77,6 +87,7 @@ namespace KarlsonMod
             GUILayout.BeginHorizontal(new GUILayoutOption[0]);
 
             KarlsonModPlugin.GodmodeEntry.Value = GUILayout.Toggle(KarlsonModPlugin.GodmodeEntry.Value, "Godmode", new GUILayoutOption[0]);
+            KarlsonModPlugin.NoclipEntry.Value = GUILayout.Toggle(KarlsonModPlugin.NoclipEntry.Value, "Noclip", new GUILayoutOption[0]);
             KarlsonModPlugin.ExplosiveBulletsEntry.Value = GUILayout.Toggle(KarlsonModPlugin.ExplosiveBulletsEntry.Value, "Explosive Bullets", new GUILayoutOption[0]);
 
             GUILayout.EndHorizontal();
@@ -88,28 +99,29 @@ namespace KarlsonMod
             if (GUILayout.Button("Drag all weapons to me", new GUILayoutOption[0]))
             {
                 PlayerPatches.DragAllWeaponsToMe();
-            } 
-            
-            if (GUILayout.Button("Spawn enemy (Coming soon)", new GUILayoutOption[0]))
+            }
+
+            if (GUILayout.Button("Spawn enemy", new GUILayoutOption[0]))
             {
+                PlayerPatches.SpawnEnemy();
             }
 
             GUILayout.EndHorizontal();
 
             GUILayout.Space(20f);
 
-            string gameObjSearch = "";
             gameObjSearch = GUILayout.TextField(gameObjSearch);
 
-            if (GUILayout.Button("Drag specified item to me (coming soon)", new GUILayoutOption[0]))
+            if (GUILayout.Button("Drag specified items to me", new GUILayoutOption[0]))
             {
-                //PlayerPatches.DragItemToMe(gameObjSearch);
+                PlayerPatches.DragItemToMe(gameObjSearch);
             }
 
             GUILayout.Space(30f);
-            GUILayout.Label($"Remaining Enemies left: {PlayerPatches.EnemiesLeft()}");
+            GUILayout.Label($"Enemies in current Level: {PlayerPatches.EnemiesLeft()}");
 
             GUILayout.EndVertical();
+            GUI.DragWindow(new Rect(0, 0, 10000, 20));
         }
     }
 }
