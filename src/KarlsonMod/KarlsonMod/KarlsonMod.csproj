@@ -66,8 +66,17 @@
     <Reference Include="UnityEngine">
       <HintPath>Libs\UnityEngine.dll</HintPath>
     </Reference>
+    <Reference Include="UnityEngine.AIModule">
+      <HintPath>Libs\UnityEngine.AIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>Libs\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
     <Reference Include="UnityEngine.CoreModule">
       <HintPath>Libs\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ImageConversionModule">
+      <HintPath>Libs\UnityEngine.ImageConversionModule.dll</HintPath>
     </Reference>
     <Reference Include="UnityEngine.IMGUIModule">
       <HintPath>Libs\UnityEngine.IMGUIModule.dll</HintPath>
@@ -93,8 +102,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MonoBehaviours\HitmarkerDisplay.cs" />
     <Compile Include="MonoBehaviours\KarlsonModComponent.cs" />
     <Compile Include="Patches\BulletPatches.cs" />
+    <Compile Include="Patches\EnemyPatches.cs" />
     <Compile Include="Patches\PlayerPatches.cs" />
     <Compile Include="KarlsonModPlugin.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -105,9 +116,15 @@
     <None Include="App.config" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="hitmarker.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>mkdir "C:\Users\merli\OneDrive\Desktop\Karlson\BepInEx\plugins\$(TargetName)"
-xcopy /q/y/i "$(TargetPath)" "C:\Users\merli\OneDrive\Desktop\Karlson\BepInEx\plugins\$(TargetName)" /E /H /C</PostBuildEvent>
+xcopy /q/y/i "$(TargetPath)" "C:\Users\merli\OneDrive\Desktop\Karlson\BepInEx\plugins\$(TargetName)" /E /H /C
+xcopy /q/y/i "$(TargetDir)hitmarker.png" "C:\Users\merli\OneDrive\Desktop\Karlson\BepInEx\plugins\$(TargetName)" /E /H /C</PostBuildEvent>
   </PropertyGroup>
 </Project>

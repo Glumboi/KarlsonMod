@@ -14,8 +14,8 @@ namespace KarlsonMod.Patches
         public static bool noclip = false;
         public static bool godMode = false;
         private static Transform transformOfPlayer;
-        private static PlayerMovement instance;
         private static int spawnedEnemiesCount = 0;
+        public static PlayerMovement instance;
 
         [HarmonyPatch("Awake")]
         [HarmonyPostfix]
